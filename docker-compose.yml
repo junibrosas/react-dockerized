@@ -1,0 +1,14 @@
+version: "3.7"
+
+services:
+  app:
+    build:
+      context: .
+      target: base
+    command: yarn start 
+    ports:
+      - 3000:3000
+    volumes:
+      - ./public:/app/public
+      - ./src:/app/src
+
