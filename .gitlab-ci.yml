@@ -10,12 +10,16 @@ build:
     - npm install
     - npm build
     - echo "Build successfully!"
+    artifacts:
+      expire_in: 1 hour
+      paths:
+        - build
+        - node_modules/
 
 test:
   stage: test
   image: node
   script:
     - echo "Testing App"
-    - npm install
     - CI=true npm test
     - echo "Test successfully!"
