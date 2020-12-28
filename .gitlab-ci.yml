@@ -11,17 +11,12 @@ stages:
   - test
   - deploy
 
-cache:
-  paths:
-    - build
-    - node_modules/
-
 build:
   stage: build
   image: node
   script: 
     - npm install
-    - npm build
+    - npm run build
   artifacts:
     expire_in: 1 hour
     paths:
@@ -32,10 +27,12 @@ test:
   stage: test
   image: node
   script:
-    - CI=true npm test
+    - CI=true npm run test
 
 deploy:
   stage: deploy
-  image: registry.gitlab.com/gitlab-org/cloud-deploy/aws-base:latest  # see the note below
+  image: registry.gitlab.com/gitlab-org/cloud-deploy/aws-base:latest
+  dependencies:
+    - build
   script:
-    - aws s3 cp --recursive ./build s3://www.react-dockerized.com
+    - aws s3 cp --recursive build/ s3://www.react-dockerized.com
