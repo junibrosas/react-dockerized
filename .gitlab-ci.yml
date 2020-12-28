@@ -1,7 +1,15 @@
+# https://hub.docker.com/r/library/node/tags/
+image: node:latest
+
+#AWS access keys stored as secret variables 
+variables:
+  AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID 
+  AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
+
 stages:
   - build
   - test
-  - docker-build
+  - deploy
 
 build:
   stage: build
@@ -25,13 +33,7 @@ test:
     - CI=true npm test
     - echo "Test successfully!"
 
-docker-build:
-  stage: docker-build
-  image: docker:latest
-  services:
-    - name: docker:19.03.8-dind
-  before_script:
-    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+deploy:
+  stage: deploy
   script:
-    - docker build --pull -t "$CI_REGISTRY_IMAGE" .
-    - docker push "$CI_REGISTRY_IMAGE"
+    - npm run-script deploy
