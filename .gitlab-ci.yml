@@ -1,5 +1,5 @@
 # https://hub.docker.com/r/library/node/tags/
-image: registry.gitlab.com/gitlab-org/cloud-deploy/aws-base:latest
+image: node:latest
 
 #AWS access keys stored as secret variables 
 variables:
@@ -35,6 +35,6 @@ test:
 
 deploy:
   stage: deploy
-  image: node
+  image: registry.gitlab.com/gitlab-org/cloud-deploy/aws-base:latest  # see the note below
   script:
-    - npm run-script deploy
+    - aws s3 cp --recursive ./build s3://www.react-dockerized.com
