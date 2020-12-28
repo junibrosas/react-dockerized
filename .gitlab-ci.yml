@@ -1,5 +1,5 @@
 # https://hub.docker.com/r/library/node/tags/
-image: aws-base:latest
+image: node:latest
 
 #AWS access keys stored as secret variables 
 variables:
@@ -35,5 +35,6 @@ test:
 
 deploy:
   stage: deploy
+  image: registry.gitlab.com/gitlab-org/cloud-deploy/aws-base:latest
   script:
     - npm run-script deploy
