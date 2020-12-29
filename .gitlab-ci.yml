@@ -21,7 +21,7 @@ build:
   artifacts:
     expire_in: 1 hour
     paths:
-      - build # destination folder
+      - ./build # destination folder
       - node_modules/
 
 test:
@@ -36,4 +36,4 @@ deploy:
   dependencies:
     - build # reference from artifact path
   script:
-    - aws s3 cp build/ s3://react-dockerized/ --recursive --include "*" 
+    - aws s3 cp ./build/ s3://react-dockerized/ --recursive --include "*" 
