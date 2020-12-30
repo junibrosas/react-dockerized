@@ -37,8 +37,8 @@ branch_develop:
     refs:
       - develop
 
-yarn_prod:
-  extends: .yarn_build
+branch_prod:
+  extends: .npm_build
   stage: build
   before_script:
     - export APP_ENV="prod"
