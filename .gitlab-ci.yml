@@ -7,22 +7,44 @@ variables:
   AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
   S3_BUCKET_NAME: $S3_BUCKET_NAME
 
+
+# Cache node modules - speeds up future builds
+cache:
+  paths:
+    - node_modules
+
 stages:
   - build
   - test
   - deploy
 
-build:
-  stage: build
+.npm_build:
   image: node
   script: 
-    - npm install
-    - npm run build
+    - npm install         # Install all dependencies
+    - npm run build       # Build the project
   artifacts:
     expire_in: 1 hour
     paths:
-      - ./build # destination folder
-      - node_modules/
+      - ./build           # Destination folder to persist
+
+branch_develop:
+  extends: .npm_build
+  stage: build
+  before_script:
+    - export APP_ENV="dev"
+  only:
+    refs:
+      - develop
+
+branch_prod:
+  extends: .npm_build
+  stage: build
+  before_script:
+    - export APP_ENV="prod"
+  only:
+    refs:
+      - master
 
 test:
   stage: test
@@ -30,10 +52,31 @@ test:
   script:
     - CI=true npm run test
 
-deploy:
-  stage: deploy
+.deploy_aws:
   image: registry.gitlab.com/gitlab-org/cloud-deploy/aws-base:latest
   dependencies:
-    - build # reference from artifact path
+    - build               # reference from artifact path
   script:
     - aws s3 cp ./build/ s3://$S3_BUCKET_NAME/ --recursive --include "*" 
+
+deploy_dev:
+  extends: .deploy_aws
+  stage: deploy
+  dependencies:
+    - branch_develop
+  before_script:
+    - export S3_BUCKET_NAME=$S3_BUCKET_DEV
+  only:
+    refs:
+      - develop
+
+deploy_prod:
+  extends: .deploy_aws
+  stage: deploy
+  dependencies:
+    - branch_prod
+  before_script:
+    - export S3_BUCKET_NAME=$S3_BUCKET_PROD
+  only:
+    refs:
+      - master
