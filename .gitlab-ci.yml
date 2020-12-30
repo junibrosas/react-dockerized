@@ -1,37 +1,39 @@
+# https://hub.docker.com/r/library/node/tags/
+image: node:latest
+
+#AWS access keys stored as secret variables 
+variables:
+  AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID 
+  AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
+  S3_BUCKET_NAME: $S3_BUCKET_NAME
+
 stages:
   - build
   - test
-  - docker-build
+  - deploy
 
 build:
   stage: build
   image: node
   script: 
-    - echo "Start building App"
     - npm install
-    - npm build
-    - echo "Build successfully!"
+    - npm run build
   artifacts:
     expire_in: 1 hour
     paths:
-      - build
+      - ./build # destination folder
       - node_modules/
 
 test:
   stage: test
   image: node
   script:
-    - echo "Testing App"
-    - CI=true npm test
-    - echo "Test successfully!"
+    - CI=true npm run test
 
-docker-build:
-  stage: docker-build
-  image: docker:latest
-  services:
-    - name: docker:19.03.8-dind
-  before_script:
-    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+deploy:
+  stage: deploy
+  image: registry.gitlab.com/gitlab-org/cloud-deploy/aws-base:latest
+  dependencies:
+    - build # reference from artifact path
   script:
-    - docker build --pull -t "$CI_REGISTRY_IMAGE" .
-    - docker push "$CI_REGISTRY_IMAGE"
+    - aws s3 cp ./build/ s3://$S3_BUCKET_NAME/ --recursive --include "*" 
