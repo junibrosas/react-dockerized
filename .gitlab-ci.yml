@@ -29,7 +29,7 @@ stages:
 
 # Base deploy script
 .deploy_aws:
-  image: registry.gitlab.com/gitlab-org/cloud-deploy/aws-base:latest
+  image: amazon/aws-cli
   dependencies:
     - build               # reference from artifact path
   script:
