@@ -1,11 +1,20 @@
 ## React Dockerized
 
-This is a simple react-based application that is built with Docker with the final product being served in an `nginx:alpine` image.
+This is a simple react-based application that is built with Docker with the final product being served in an `nginx:alpine` image. The main objective of this project is to play around with Docker, AWS and Gitlab CI/CD.
+
+## How to run the application
+
+- To run locally, `npm install && npm run start`
+- to run via docker, `docker-compose up`
+
+## How to deploy
 
 To upload this application to AWS S3, you need to create an S3 bucket with security credentials. Below are the variables for you to fill in:
 
 - AWS_ACCESS_KEY_ID
 - AWS_SECRET_ACCESS_KEY
+
+The CI/CD pipeline will do the job to deploy automatically the application.
 
 Follow this tutorial to learn more:
 
@@ -19,3 +28,11 @@ Follow this tutorial to learn more:
 Available AWS CLI docker images:
 
 - registry.gitlab.com/gitlab-org/cloud-deploy/aws-base:latest
+
+## TODO
+
+- [x] Run the application using WSL 2
+- [x] Add gitlab ci/cd pipelines
+- [x] Add ability to run unit tests on ci/cd
+- [x] deploy on AWS S3
+- [ ] try deploying using AWS ECS and AWS fargate
