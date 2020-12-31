@@ -18,5 +18,4 @@ Follow this tutorial to learn more:
 
 Available AWS CLI docker images:
 
-- amazon/aws-cli
 - registry.gitlab.com/gitlab-org/cloud-deploy/aws-base:latest
